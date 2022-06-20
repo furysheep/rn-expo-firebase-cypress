@@ -1,0 +1,6 @@
+{
+  "fixturesFolder": "cypress/fixtures",
+  "supportFile": "cypress/support",
+  "pluginsFile": "cypress/plugins",
+  "baseUrl": "http://localhost:19006"
+}
