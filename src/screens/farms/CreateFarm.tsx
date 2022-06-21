@@ -15,6 +15,7 @@ import {
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import * as yup from "yup";
 import { Formik } from "formik";
+import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "../../config/firebase";
 import { UserContext } from "../../contexts/userContext";
@@ -96,7 +97,8 @@ const CreateFarm = ({ navigation }): React.ReactElement => {
       delete requestBody.name;
       await setDoc(doc(db, "farms", docId), requestBody);
       navigation.navigate("FarmList");
-    } catch {
+    } catch (e) {
+      console.error(e);
       Alert.alert("Error while talking to firebase");
     } finally {
       setLoading(false);

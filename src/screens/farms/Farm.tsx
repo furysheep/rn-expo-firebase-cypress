@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { Asset, useAssets } from "expo-asset";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { FarmProps } from "./types";
 import { Avatar, ListItem } from "@rneui/themed";
 
 const Farm = ({ farm }: { farm: FarmProps }) => {
   const [uri, setUri] = useState("");
+  const [assets, error] = useAssets([
+    require("../../assets/no-image-icon.png"),
+  ]);
 
   useEffect(() => {
     if (!farm.imgId) return;
@@ -15,12 +19,7 @@ const Farm = ({ farm }: { farm: FarmProps }) => {
 
   return (
     <ListItem bottomDivider>
-      <Avatar
-        source={{
-          uri: uri || require("../../assets/no-image-icon.png"),
-        }}
-        size={80}
-      />
+      <Avatar source={uri ? { uri } : assets?.[0] || {}} size={80} />
       <ListItem.Content>
         <ListItem.Title testID="displayName_list">
           {farm.displayName}
