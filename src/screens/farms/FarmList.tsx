@@ -10,7 +10,13 @@ import {
 import { Button } from "@rneui/themed";
 import { signOut, getAuth } from "firebase/auth";
 import { useIsFocused } from "@react-navigation/native";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../config/firebase";
 import { UserContext } from "../../contexts/userContext";
 import Farm from "./Farm";
@@ -24,21 +30,17 @@ const EmptyListComponent = () => (
 
 const FarmList = () => {
   const auth = getAuth();
-  const isFocused = useIsFocused();
   const { uid } = useContext(UserContext);
   const [farms, setFarms] = useState<FarmProps[]>([]);
 
   useEffect(() => {
-    const getQuery = async () => {
-      const q = query(collection(db, "farms"), where("uid", "==", uid));
-      const querySnapshot = await getDocs(q);
-      setFarms(querySnapshot.docs.map((doc) => doc.data() as FarmProps));
-    };
-
-    if (isFocused) {
-      getQuery();
-    }
-  }, [isFocused]);
+    const q = query(collection(db, "farms"), where("uid", "==", uid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newFarms = snapshot.docs.map((doc) => doc.data() as FarmProps);
+      setFarms(newFarms);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

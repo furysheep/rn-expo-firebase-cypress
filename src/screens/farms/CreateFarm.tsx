@@ -6,13 +6,12 @@ import * as ImagePicker from "expo-image-picker";
 import {
   setDoc,
   doc,
-  addDoc,
   collection,
   query,
   where,
   getDocs,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import * as yup from "yup";
 import { Formik } from "formik";
 import "react-native-get-random-values";
@@ -81,7 +80,7 @@ const CreateFarm = ({ navigation }): React.ReactElement => {
     const blob = await response.blob();
     const storage = getStorage();
     const fileRef = ref(storage, uuidv4());
-    const result = await uploadBytes(fileRef, blob);
+    const result = await uploadBytesResumable(fileRef, blob);
     return result.metadata.fullPath;
   };
 
@@ -94,7 +93,6 @@ const CreateFarm = ({ navigation }): React.ReactElement => {
         requestBody.imgId = imgId;
       }
       const docId = requestBody.name;
-      delete requestBody.name;
       await setDoc(doc(db, "farms", docId), requestBody);
       navigation.navigate("FarmList");
     } catch (e) {
